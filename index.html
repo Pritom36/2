@@ -3,325 +3,1257 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comic Linguist - Comics for English Learners</title>
+    <title>English Learning Comics</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
     <style>
-        /* CSS styles remain the same as the previous version */
-        /* Ensure all styles for .pdf-modal, controls, etc. are present */
-        :root { --primary: #4361ee; --secondary: #3f37c9; --accent: #f72585; --light: #f8f9fa; --dark: #212529; --success: #4cc9f0; --warning: #fcbf49; --danger: #f94144; --gray-100: #f8f9fa; --gray-200: #e9ecef; --gray-300: #dee2e6; --gray-400: #ced4da; --gray-500: #adb5bd; --gray-600: #6c757d; --gray-700: #495057; --gray-800: #343a40; --gray-900: #212529; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: var(--dark); background-color: var(--gray-100); transition: background-color 0.3s ease; }
-        body.dark-mode { --light: #212529; --dark: #f8f9fa; --gray-100: #212529; --gray-200: #343a40; --gray-300: #dee2e6; --gray-400: #ced4da; --gray-600: #adb5bd; --gray-700: #f8f9fa; --gray-800: #e9ecef; background-color: var(--gray-100); color: var(--dark); }
-        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-        header { background-color: var(--primary); color: white; padding: 1rem 0; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 100; }
-        .header-container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: bold; } .logo i { font-size: 1.8rem; }
-        nav ul { display: flex; list-style: none; gap: 1.5rem; }
-        nav a { color: white; text-decoration: none; padding: 0.5rem; border-radius: 4px; transition: background-color 0.3s ease; }
-        nav a:hover, nav a.active { background-color: rgba(255, 255, 255, 0.1); }
-        .nav-actions { display: flex; align-items: center; gap: 1rem; }
-        .search-bar { position: relative; display: flex; align-items: center; }
-        .search-bar input { padding: 0.5rem 1rem 0.5rem 2.5rem; border: none; border-radius: 50px; background: rgba(255, 255, 255, 0.1); color: white; width: 200px; transition: all 0.3s; }
-        .search-bar i { position: absolute; left: 0.8rem; color: rgba(255, 255, 255, 0.7); }
-        .search-bar input:focus { outline: none; width: 250px; background: rgba(255, 255, 255, 0.2); }
-        .search-bar input::placeholder { color: rgba(255, 255, 255, 0.7); }
-        .theme-toggle { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; transition: transform 0.3s ease; }
-        .theme-toggle:hover { transform: rotate(15deg); }
-        .mobile-menu-btn { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-        .hero { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 4rem 0; text-align: center; }
-        .hero h1 { font-size: 2.5rem; margin-bottom: 1rem; } .hero p { font-size: 1.2rem; max-width: 700px; margin: 0 auto 2rem; opacity: 0.9; }
-        .hero-buttons { display: flex; justify-content: center; gap: 1rem; margin-top: 2rem; }
-        .btn { display: inline-block; padding: 0.8rem 1.5rem; border-radius: 50px; text-decoration: none; transition: all 0.3s ease; font-weight: 600; cursor: pointer; border: none; }
-        .btn-primary { background-color: var(--light); color: var(--primary); } .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
-        .btn-outline { background: transparent; color: white; border: 2px solid white; } .btn-outline:hover { background-color: white; color: var(--primary); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); }
-        .section-title { text-align: center; margin: 3rem 0 2rem; font-size: 2rem; color: var(--dark); } body.dark-mode .section-title { color: var(--light); }
-        .comics-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 2rem; padding: 1rem 0 3rem; }
-        .comic-card { background-color: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); transition: all 0.3s ease, opacity 0.5s ease, transform 0.5s ease; position: relative; opacity: 0; transform: translateY(20px); }
-        .comic-card.is-visible { opacity: 1; transform: translateY(0); }
-        body.dark-mode .comic-card { background-color: var(--gray-800); box-shadow: 0 5px 15px rgba(255, 255, 255, 0.05); }
-        .comic-card:hover { transform: translateY(-10px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15); } body.dark-mode .comic-card:hover { box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1); }
-        .comic-image { width: 100%; height: 300px; object-fit: cover; display: block; background-color: var(--gray-200); } body.dark-mode .comic-image { background-color: var(--gray-700); }
-        .comic-info { padding: 1.5rem; position: relative; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }
-        .comic-info > div:first-child { flex-grow: 1; }
-        .comic-title { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--dark); } body.dark-mode .comic-title { color: var(--light); }
-        .comic-level { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 50px; font-size: 0.8rem; font-weight: 600; margin-bottom: 1rem; }
-        .beginner { background-color: #d9f2e6; color: #16a367; } .intermediate { background-color: #e6f2ff; color: #007bff; } .advanced { background-color: #f9e6e6; color: #e63946; }
-        body.dark-mode .beginner { background-color: #16a36733; color: #d9f2e6; } body.dark-mode .intermediate { background-color: #007bff33; color: #e6f2ff; } body.dark-mode .advanced { background-color: #e6394633; color: #f9e6e6; }
-        .comic-description { color: var(--gray-700); margin-bottom: 1.5rem; display: -webkit-box; -webkit-line-clamp: 3; line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; min-height: calc(1.6 * 3 * 1em); } body.dark-mode .comic-description { color: var(--gray-300); }
-        .comic-actions { margin-top: auto; display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; }
-        .comic-link { display: inline-block; padding: 0.5rem 1rem; border-radius: 50px; background-color: var(--primary); color: white; text-decoration: none; font-weight: 600; transition: all 0.3s ease; }
-        .comic-link:hover { background-color: var(--secondary); transform: translateY(-2px); }
-        .vocab-assistant-btn { width: 40px; height: 40px; border-radius: 50%; background-color: var(--accent); color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2); transition: all 0.3s ease; z-index: 5; flex-shrink: 0; margin-left: 10px; }
-        .vocab-assistant-btn:hover { transform: scale(1.1); }
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --accent: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
 
-        /* Vocab Modal */
-        .vocab-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 2500; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
-        .vocab-modal.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
-        .vocab-content { background: white; border-radius: 10px; width: 90%; max-width: 600px; max-height: 80vh; overflow-y: auto; padding: 2rem; position: relative; transform: translateY(20px); transition: all 0.3s ease; } body.dark-mode .vocab-content { background-color: var(--gray-900); color: var(--light); }
-        .vocab-modal.active .vocab-content { transform: translateY(0); }
-        .vocab-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--gray-600); } body.dark-mode .vocab-close { color: var(--gray-300); } .vocab-close:hover { color: var(--danger); }
-        .vocab-title { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--dark); } body.dark-mode .vocab-title { color: var(--light); }
-        .vocab-list { list-style: none; } .vocab-item { margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-200); } body.dark-mode .vocab-item { border-bottom-color: var(--gray-700); }
-        .vocab-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .vocab-word { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--primary); }
-        .vocab-definition { margin-bottom: 0.5rem; color: var(--dark); } body.dark-mode .vocab-definition { color: var(--gray-300); }
-        .vocab-example { font-style: italic; color: var(--gray-600); } body.dark-mode .vocab-example { color: var(--gray-400); }
-        .pronunciation { color: var(--gray-600); font-size: 0.9rem; margin-bottom: 0.5rem; } body.dark-mode .pronunciation { color: var(--gray-400); }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        /* Footer */
-        footer { background-color: var(--gray-900); color: var(--gray-400); padding: 3rem 0; margin-top: 3rem; } .footer-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; } .footer-col h3 { color: white; margin-bottom: 1.5rem; font-size: 1.2rem; } .footer-col ul { list-style: none; } .footer-col li { margin-bottom: 0.8rem; } .footer-col a { color: var(--gray-400); text-decoration: none; transition: color 0.3s ease; } .footer-col a:hover { color: white; } .social-links { display: flex; gap: 1rem; margin-top: 1rem; } .social-links a { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.1); color: white; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; } .social-links a:hover { background-color: var(--primary); transform: translateY(-3px); } .copyright { text-align: center; padding-top: 2rem; margin-top: 2rem; border-top: 1px solid var(--gray-700); color: var(--gray-500); }
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background: linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.9)), 
+                        url('https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center/cover;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            color: var(--dark);
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 50px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-bar button {
+            position: absolute;
+            right: 5px;
+            top: 5px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 0.7rem 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar button:hover {
+            background-color: var(--secondary);
+        }
+
+        .comics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+            padding: 3rem 0;
+        }
+
+        .comic-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .comic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .comic-cover {
+            height: 350px;
+            overflow: hidden;
+        }
+
+        .comic-cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .comic-card:hover .comic-cover img {
+            transform: scale(1.05);
+        }
+
+        .comic-info {
+            padding: 1.5rem;
+        }
+
+        .comic-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .comic-info p {
+            color: #666;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .comic-level {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .comic-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .vocab-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .vocab-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--primary);
+        }
 
         /* PDF Viewer Modal */
-        .pdf-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; align-items: center; justify-content: center; z-index: 2000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
-        .pdf-modal.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
-        .pdf-modal:fullscreen { background-color: var(--gray-900); padding: 0; }
-        .pdf-modal:fullscreen .pdf-container { width: 100%; height: 100%; border-radius: 0; box-shadow: none; }
-        .pdf-modal:fullscreen .pdf-header { border-radius: 0; }
-        /* Style to visually indicate disabled vocab button in fullscreen */
-        .pdf-modal:fullscreen #toolbarVocabBtn { opacity: 0.3 !important; cursor: not-allowed !important; background: none !important; }
-        .pdf-container { width: 95%; height: 95vh; max-width: 1400px; background: white; position: relative; display: flex; flex-direction: column; border-radius: 10px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.2); } body.dark-mode .pdf-container { background-color: var(--gray-800); }
-        .pdf-header { display: flex; justify-content: space-between; align-items: center; padding: 0.8rem 1.5rem; background: var(--primary); color: white; flex-shrink: 0; }
-        .pdf-title { font-size: 1.2rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-right: 1rem; }
-        .pdf-controls { display: flex; align-items: center; gap: 0.8rem; flex-wrap: nowrap; }
-        .pdf-control-btn { background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem; padding: 0.3rem; line-height: 1; transition: opacity 0.2s ease; /* Add transition for smooth disable/enable */ }
-        .pdf-control-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-        .pdf-control-btn:hover:not(:disabled) { color: var(--gray-300); }
-        #pageInfo { font-size: 0.9rem; margin: 0 0.5rem; white-space: nowrap; }
-        .pdf-content { flex: 1; overflow: auto; background-color: var(--gray-300); text-align: center; padding: 1rem 0; } body.dark-mode .pdf-content { background-color: var(--gray-700); }
-        #pdf-canvas { max-width: 100%; height: auto; display: block; margin: 0 auto; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
-        .pdf-modal:fullscreen #pdf-canvas { max-height: calc(100vh - 70px); max-width: 100%; }
-        .pdf-close { position: absolute; top: 0.8rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: white; z-index: 10; padding: 0.2rem; } .pdf-close:hover { color: var(--danger); }
-        #pdf-error { color: red; padding: 2rem; display: none; }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow: auto;
+        }
 
-        /* Loader */
-        .loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; align-items: center; justify-content: center; z-index: 3000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0s linear 0.3s; }
-        .loader.active { opacity: 1; visibility: visible; transition: opacity 0.3s ease; }
-        .spinner { width: 50px; height: 50px; border: 5px solid var(--gray-200); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; } @keyframes spin { to { transform: rotate(360deg); } } .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border-width: 0; }
+        .modal.fullscreen {
+            background-color: #f5f5f5;
+        }
 
-        /* Media Queries */
-        @media (max-width: 768px) { /* Tablet and smaller */ .header-container{flex-wrap: wrap;} nav { position: fixed; top: 0; left: -100%; width: 80%; max-width: 300px; height: 100vh; background-color: var(--primary); z-index: 200; transition: left 0.3s ease; padding: 5rem 2rem 2rem; box-shadow: 5px 0 15px rgba(0,0,0,0.2); } nav.active { left: 0; } nav ul { flex-direction: column; gap: 2rem; } nav a { display: block; padding: 0.8rem; } .nav-actions { order: 3; width: 100%; justify-content: flex-end; margin-top: 1rem; padding: 0 1rem; } .search-bar { flex-grow: 1; margin-right: 1rem; } .search-bar input { width: 100%; } .search-bar input:focus { width: 100%; } .mobile-menu-btn { display: block; order: 2; margin-left: auto; z-index: 300; } .logo { order: 1; } .hero h1 { font-size: 2rem; } .hero p { font-size: 1rem; } .hero-buttons { flex-direction: column; align-items: center; gap: 1rem; } .btn { width: 80%; max-width: 300px; text-align: center; } .footer-container { grid-template-columns: 1fr; text-align: center; } .footer-col .social-links { justify-content: center; } .pdf-modal { align-items: flex-start; background: var(--gray-900); } .pdf-container { width: 100%; height: 100%; border-radius: 0; box-shadow: none; top: 0; max-width: none; } .pdf-header { border-radius: 0; padding: 0.5rem 1rem; } .pdf-title { font-size: 1rem; } .pdf-controls { gap: 0.4rem; } .pdf-control-btn { font-size: 1rem; padding: 0.2rem; } #pageInfo { font-size: 0.8rem; margin: 0 0.3rem; } .pdf-close { top: 0.5rem; right: 0.5rem; font-size: 1.2rem;} .pdf-content { padding: 0.5rem 0; } }
-        @media (max-width: 480px) { /* Mobile */ .pdf-controls { gap: 0.2rem; flex-wrap: wrap; justify-content: center; margin-top: 0.5rem; } .pdf-control-btn { font-size: 0.9rem; } /* #pageInfo { display: none; } */ .pdf-header { flex-direction: column; align-items: center; padding-bottom: 0.5rem; } .pdf-title { max-width: 90%; margin-right: 0; margin-bottom: 0.5rem; text-align: center; } }
+        .modal-content {
+            background-color: white;
+            margin: 2rem auto;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-content.fullscreen {
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 0;
+            padding: 1rem;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: #666;
+            cursor: pointer;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.8);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .pdf-container {
+            width: 100%;
+            height: 70vh;
+            border: 1px solid #ddd;
+            margin-top: 1rem;
+            position: relative;
+            overflow: auto;
+        }
+
+        .pdf-container.fullscreen {
+            height: calc(100vh - 120px);
+            border: none;
+        }
+
+        #pdf-viewer {
+            width: 100%;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .pdf-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .pdf-controls button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pdf-controls button:hover {
+            background-color: var(--secondary);
+        }
+
+        .pdf-controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .zoom-controls {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Floating Vocabulary Button in Fullscreen */
+        .floating-vocab-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background-color: var(--accent);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .floating-vocab-btn:hover {
+            transform: scale(1.1);
+            background-color: var(--primary);
+        }
+
+        /* Vocabulary Panel */
+        .vocab-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100vh;
+            background-color: white;
+            box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            z-index: 1000;
+            transition: right 0.4s ease;
+            overflow-y: auto;
+        }
+
+        .vocab-panel.active {
+            right: 0;
+        }
+
+        .vocab-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .vocab-header h3 {
+            color: var(--secondary);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .vocab-list {
+            list-style: none;
+        }
+
+        .vocab-item {
+            padding: 1rem 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .vocab-item:last-child {
+            border-bottom: none;
+        }
+
+        .vocab-word {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.3rem;
+        }
+
+        .vocab-definition {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Loading indicator */
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            font-size: 1.2rem;
+            color: #666;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav ul {
+                gap: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .comics-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            }
+
+            .vocab-panel {
+                width: 100%;
+                max-width: 320px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1rem;
+            }
+
+            .pdf-controls {
+                gap: 0.5rem;
+            }
+
+            .pdf-controls button {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero {
+                padding: 3rem 0;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .comics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .vocab-panel {
+                max-width: 280px;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .pdf-controls {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .floating-vocab-btn {
+                width: 50px;
+                height: 50px;
+                bottom: 15px;
+                right: 15px;
+            }
+        }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <header> <div class="container header-container"> <div class="logo"> <i class="fas fa-book-open"></i> <span>Comic Linguist</span> </div> <button class="mobile-menu-btn" aria-label="Toggle menu" aria-expanded="false"> <i class="fas fa-bars"></i> </button> <nav> <ul> <li><a href="#" class="active">Home</a></li> <li><a href="#comics">Comics</a></li> <li><a href="#">Levels</a></li> <li><a href="#">About</a></li> <li><a href="#">Contact</a></li> </ul> </nav> <div class="nav-actions"> <div class="search-bar"> <i class="fas fa-search"></i> <input type="text" placeholder="Search comics..."> </div> <button class="theme-toggle" aria-label="Toggle dark mode"> <i class="fas fa-moon"></i> </button> </div> </div> </header>
-
-    <!-- Hero Section -->
-    <section class="hero"> <div class="container"> <h1>Learn English Through Comics</h1> <p>Enhance your English skills with our collection of specially curated comic books designed for language learners. Each comic comes with a vocabulary assistant to help you understand new words and expressions.</p> <div class="hero-buttons"> <a href="#comics" class="btn btn-primary">Explore Comics</a> <a href="#" class="btn btn-outline">How It Works</a> </div> </div> </section>
-
-    <!-- Comics Section -->
-    <section id="comics" class="comics-section">
+    <header>
         <div class="container">
-            <h2 class="section-title">Featured Comics</h2>
-            <div class="comics-container">
-                <!-- Comic Card 1 -->
-                <div class="comic-card"> <img src="https://via.placeholder.com/400x300/4361EE/FFFFFF?text=City+Adventures" alt="City Adventures Cover" class="comic-image"> <div class="comic-info"> <div> <h3 class="comic-title">City Adventures</h3> <span class="comic-level beginner">Beginner</span> <p class="comic-description">Join Alex and Maria as they explore New York City. Perfect for beginners.</p> </div> <div class="comic-actions"> <a href="#" class="comic-link" data-comic-id="comic1">Read Now</a> <button class="vocab-assistant-btn" data-vocab-id="vocab1" aria-label="Open Vocabulary for City Adventures"> <i class="fas fa-book"></i> </button> </div> </div> </div>
-                <!-- Comic Card 2 -->
-                <div class="comic-card"> <img src="https://via.placeholder.com/400x300/3F37C9/FFFFFF?text=Mystery+at+Midnight" alt="Mystery at Midnight Cover" class="comic-image"> <div class="comic-info"> <div> <h3 class="comic-title">Mystery at Midnight</h3> <span class="comic-level intermediate">Intermediate</span> <p class="comic-description">Detective Sarah solves a mysterious case in London. Intermediate vocabulary.</p> </div> <div class="comic-actions"> <a href="#" class="comic-link" data-comic-id="comic2">Read Now</a> <button class="vocab-assistant-btn" data-vocab-id="vocab2" aria-label="Open Vocabulary for Mystery at Midnight"> <i class="fas fa-book"></i> </button> </div> </div> </div>
-                <!-- Comic Card 3 -->
-                <div class="comic-card"> <img src="https://via.placeholder.com/400x300/F72585/FFFFFF?text=Sci-Fi+Chronicles" alt="Sci-Fi Chronicles Cover" class="comic-image"> <div class="comic-info"> <div> <h3 class="comic-title">Sci-Fi Chronicles</h3> <span class="comic-level advanced">Advanced</span> <p class="comic-description">A futuristic adventure with complex themes and advanced vocabulary.</p> </div> <div class="comic-actions"> <a href="#" class="comic-link" data-comic-id="comic3">Read Now</a> <button class="vocab-assistant-btn" data-vocab-id="vocab3" aria-label="Open Vocabulary for Sci-Fi Chronicles"> <i class="fas fa-book"></i> </button> </div> </div> </div>
-                <!-- Add more cards -->
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>English Learning Comics</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">Comics</a></li>
+                        <li><a href="#">Levels</a></li>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Learn English Through Comics</h1>
+            <p>Discover our curated collection of comic books designed to help English language learners improve their vocabulary and reading skills in a fun and engaging way.</p>
+            <div class="search-bar">
+                <input type="text" placeholder="Search for comics...">
+                <button><i class="fas fa-search"></i> Search</button>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer> <div class="container footer-container"> <div class="footer-col"> <h3>Comic Linguist</h3> <p>Learn English through engaging comic books...</p> <div class="social-links"> <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a> <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a> <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a> <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a> </div> </div> <div class="footer-col"> <h3>Quick Links</h3> <ul> <li><a href="#">Home</a></li> <li><a href="#comics">Comics</a></li> <li><a href="#">Levels</a></li> <li><a href="#">About</a></li> <li><a href="#">Contact</a></li> </ul> </div> <div class="footer-col"> <h3>Resources</h3> <ul> <li><a href="#">How It Works</a></li> <li><a href="#">Learning Tips</a></li> <li><a href="#">Grammar Guides</a></li> <li><a href="#">Vocabulary Lists</a></li> </ul> </div> <div class="footer-col"> <h3>Support</h3> <ul> <li><a href="#">FAQs</a></li> <li><a href="#">Privacy Policy</a></li> <li><a href="#">Terms of Service</a></li> <li><a href="#">Help Center</a></li> </ul> </div> </div> <div class="copyright"> <p>© <span id="copyright-year">2025</span> Comic Linguist. All rights reserved.</p> </div> </footer>
-
-    <!-- Vocabulary Assistant Modal -->
-    <div class="vocab-modal" id="vocabModal" role="dialog" aria-modal="true" aria-labelledby="vocabTitle"> <div class="vocab-content"> <button class="vocab-close" aria-label="Close vocabulary assistant"> <i class="fas fa-times"></i> </button> <h2 class="vocab-title" id="vocabTitle">Vocabulary Assistant</h2> <ul class="vocab-list" id="vocabList"> <li class="vocab-item">Loading vocabulary...</li> </ul> </div> </div>
-
-    <!-- PDF Viewer Modal -->
-    <div class="pdf-modal" id="pdfModal" role="dialog" aria-modal="true" aria-labelledby="pdfTitleLabel">
-         <button class="pdf-close" aria-label="Close comic viewer"> <i class="fas fa-times"></i> </button>
-        <div class="pdf-container">
-            <div class="pdf-header">
-                <div class="pdf-title" id="pdfTitleLabel">Comic Title</div>
-                <div class="pdf-controls">
-                    <button class="pdf-control-btn" id="prevPage" aria-label="Previous Page" disabled> <i class="fas fa-chevron-left"></i> </button>
-                    <span id="pageInfo" aria-live="polite">Page ? of ?</span>
-                    <button class="pdf-control-btn" id="nextPage" aria-label="Next Page" disabled> <i class="fas fa-chevron-right"></i> </button>
-                    <button class="pdf-control-btn" id="zoomOut" aria-label="Zoom Out" disabled> <i class="fas fa-search-minus"></i> </button>
-                    <button class="pdf-control-btn" id="zoomIn" aria-label="Zoom In" disabled> <i class="fas fa-search-plus"></i> </button>
-                    <button class="pdf-control-btn" id="toolbarVocabBtn" aria-label="Open Vocabulary (Exits Fullscreen)" title="Open Vocabulary (Exits Fullscreen)" disabled> <i class="fas fa-book"></i> </button>
-                    <button class="pdf-control-btn" id="fullscreenBtn" aria-label="Enter Fullscreen" title="Toggle Fullscreen (F key)" disabled> <i class="fas fa-expand"></i> </button>
+    <main class="container">
+        <div class="comics-grid">
+            <!-- Comic 1 -->
+            <div class="comic-card">
+                <div class="comic-cover">
+                    <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Superhero Adventures">
+                </div>
+                <div class="comic-info">
+                    <span class="comic-level">Beginner</span>
+                    <h3>Superhero Adventures</h3>
+                    <p>Follow the exciting adventures of Captain English as he battles grammar villains!</p>
+                    <div class="comic-actions">
+                        <button class="btn btn-primary read-comic" data-comic="superhero-adventures">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                        <button class="btn btn-outline view-vocab" data-comic="superhero-adventures">
+                            <i class="fas fa-book"></i> Vocabulary
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="pdf-content">
-                <canvas id="pdf-canvas"></canvas>
-                <div id="pdf-error" style="color: red; padding: 2rem; display: none;">Failed to load or render PDF.</div>
+
+            <!-- Comic 2 -->
+            <div class="comic-card">
+                <div class="comic-cover">
+                    <img src="https://images.unsplash.com/photo-1588653818220-0b3c3cc17c55?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Mystery Mansion">
+                </div>
+                <div class="comic-info">
+                    <span class="comic-level">Intermediate</span>
+                    <h3>Mystery Mansion</h3>
+                    <p>Solve the mystery while learning new vocabulary in this thrilling detective story.</p>
+                    <div class="comic-actions">
+                        <button class="btn btn-primary read-comic" data-comic="mystery-mansion">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                        <button class="btn btn-outline view-vocab" data-comic="mystery-mansion">
+                            <i class="fas fa-book"></i> Vocabulary
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comic 3 -->
+            <div class="comic-card">
+                <div class="comic-cover">
+                    <img src="https://images.unsplash.com/photo-1608889825103-eb5a6f5ad50d?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Space Explorers">
+                </div>
+                <div class="comic-info">
+                    <span class="comic-level">Beginner</span>
+                    <h3>Space Explorers</h3>
+                    <p>Join the crew of the Starship English on their journey through the galaxy.</p>
+                    <div class="comic-actions">
+                        <button class="btn btn-primary read-comic" data-comic="space-explorers">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                        <button class="btn btn-outline view-vocab" data-comic="space-explorers">
+                            <i class="fas fa-book"></i> Vocabulary
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comic 4 -->
+            <div class="comic-card">
+                <div class="comic-cover">
+                    <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Time Travel Tales">
+                </div>
+                <div class="comic-info">
+                    <span class="comic-level">Advanced</span>
+                    <h3>Time Travel Tales</h3>
+                    <p>Visit different historical periods while expanding your English vocabulary.</p>
+                    <div class="comic-actions">
+                        <button class="btn btn-primary read-comic" data-comic="time-travel-tales">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                        <button class="btn btn-outline view-vocab" data-comic="time-travel-tales">
+                            <i class="fas fa-book"></i> Vocabulary
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comic 5 -->
+            <div class="comic-card">
+                <div class="comic-cover">
+                    <img src="https://images.unsplash.com/photo-1635070040809-4c8c7c67d3a9?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Animal Kingdom">
+                </div>
+                <div class="comic-info">
+                    <span class="comic-level">Beginner</span>
+                    <h3>Animal Kingdom</h3>
+                    <p>Learn about animals and nature while practicing your English reading skills.</p>
+                    <div class="comic-actions">
+                        <button class="btn btn-primary read-comic" data-comic="animal-kingdom">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                        <button class="btn btn-outline view-vocab" data-comic="animal-kingdom">
+                            <i class="fas fa-book"></i> Vocabulary
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comic 6 -->
+            <div class="comic-card">
+                <div class="comic-cover">
+                    <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80" alt="Sports Stars">
+                </div>
+                <div class="comic-info">
+                    <span class="comic-level">Intermediate</span>
+                    <h3>Sports Stars</h3>
+                    <p>Discover inspiring sports stories while learning sports-related vocabulary.</p>
+                    <div class="comic-actions">
+                        <button class="btn btn-primary read-comic" data-comic="sports-stars">
+                            <i class="fas fa-book-open"></i> Read Now
+                        </button>
+                        <button class="btn btn-outline view-vocab" data-comic="sports-stars">
+                            <i class="fas fa-book"></i> Vocabulary
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- PDF Viewer Modal -->
+    <div class="modal" id="pdfModal">
+        <div class="modal-content" id="modalContent">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 id="modal-title">Comic Title</h2>
+            <div class="pdf-container" id="pdfContainer">
+                <canvas id="pdf-viewer"></canvas>
+                <div class="loading" id="loadingIndicator">Loading PDF...</div>
+            </div>
+            <div class="pdf-controls">
+                <button id="prev-page"><i class="fas fa-arrow-left"></i> Previous</button>
+                <span class="page-info" id="page-info">Page 1 of 1</span>
+                <button id="next-page">Next <i class="fas fa-arrow-right"></i></button>
+                <div class="zoom-controls">
+                    <button id="zoom-out"><i class="fas fa-search-minus"></i></button>
+                    <button id="zoom-in"><i class="fas fa-search-plus"></i></button>
+                </div>
+                <button id="fullscreen-btn"><i class="fas fa-expand"></i> Fullscreen</button>
             </div>
         </div>
     </div>
 
-    <!-- Loading Spinner -->
-    <div class="loader" id="loader" role="alert" aria-live="assertive"> <div class="spinner"></div> <span class="sr-only">Loading...</span> </div>
+    <!-- Floating Vocabulary Button (for fullscreen mode) -->
+    <div class="floating-vocab-btn" id="floatingVocabBtn" style="display: none;">
+        <i class="fas fa-book"></i>
+    </div>
 
-    <!-- PDF.js Library -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+    <!-- Vocabulary Panel -->
+    <div class="vocab-panel" id="vocabPanel">
+        <div class="vocab-header">
+            <h3>Vocabulary List</h3>
+            <button class="close-btn" id="closeVocabPanel">&times;</button>
+        </div>
+        <ul class="vocab-list" id="vocabList">
+            <!-- Vocabulary items will be inserted here by JavaScript -->
+        </ul>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>English Learning Comics</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Home</a>
+                    <a href="#">Comics</a>
+                    <a href="#">Levels</a>
+                    <a href="#">About</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+                <p class="copyright">&copy; 2023 English Learning Comics. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+        // Set PDF.js worker path
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
 
-        // DOM Elements
-        const body = document.body; const themeToggle = document.querySelector('.theme-toggle'); const mobileMenuBtn = document.querySelector('.mobile-menu-btn'); const nav = document.querySelector('nav'); const vocabButtons = document.querySelectorAll('.vocab-assistant-btn'); const comicLinks = document.querySelectorAll('.comic-link'); const vocabModal = document.getElementById('vocabModal'); const vocabClose = document.querySelector('.vocab-close'); const vocabList = document.getElementById('vocabList'); const pdfModal = document.getElementById('pdfModal'); const pdfClose = document.querySelector('.pdf-close'); const pdfCanvas = document.getElementById('pdf-canvas'); const pdfContext = pdfCanvas.getContext('2d'); const pdfTitleLabel = document.getElementById('pdfTitleLabel'); const prevPageBtn = document.getElementById('prevPage'); const nextPageBtn = document.getElementById('nextPage'); const pageInfo = document.getElementById('pageInfo'); const zoomInBtn = document.getElementById('zoomIn'); const zoomOutBtn = document.getElementById('zoomOut'); const toolbarVocabBtn = document.getElementById('toolbarVocabBtn'); const fullscreenBtn = document.getElementById('fullscreenBtn'); const loader = document.getElementById('loader'); const copyrightYear = document.getElementById('copyright-year'); const pdfErrorDiv = document.getElementById('pdf-error');
-
-        // Global PDF State
-        let pdfDoc = null; let currentPageNum = 1; let pageRendering = false; let pageNumPending = null; let currentScale = 1.5; const minScale = 0.25; const maxScale = 5.0; let currentComicIdForPdf = null;
-
-        // Initial Setup
-        if (copyrightYear) { copyrightYear.textContent = new Date().getFullYear(); }
-        applyTheme(localStorage.getItem('darkMode') === 'true');
-
-        // Theme Toggle & Mobile Menu Logic (unchanged)
-        function applyTheme(isDarkMode) { const icon = themeToggle.querySelector('i'); if (isDarkMode) { body.classList.add('dark-mode'); icon.classList.remove('fa-moon'); icon.classList.add('fa-sun'); themeToggle.setAttribute('aria-label', 'Switch to light mode'); } else { body.classList.remove('dark-mode'); icon.classList.remove('fa-sun'); icon.classList.add('fa-moon'); themeToggle.setAttribute('aria-label', 'Switch to dark mode'); } }
-        themeToggle.addEventListener('click', () => { const isDarkMode = !body.classList.contains('dark-mode'); applyTheme(isDarkMode); localStorage.setItem('darkMode', isDarkMode); });
-        function closeMobileMenu() { if (nav.classList.contains('active')) { nav.classList.remove('active'); mobileMenuBtn.setAttribute('aria-expanded', 'false'); const icon = mobileMenuBtn.querySelector('i'); icon.classList.remove('fa-times'); icon.classList.add('fa-bars'); } }
-        mobileMenuBtn.addEventListener('click', () => { const isActive = nav.classList.toggle('active'); mobileMenuBtn.setAttribute('aria-expanded', isActive); const icon = mobileMenuBtn.querySelector('i'); icon.classList.toggle('fa-bars', !isActive); icon.classList.toggle('fa-times', isActive); });
-        document.addEventListener('click', (e) => { if (nav.classList.contains('active') && !nav.contains(e.target) && !mobileMenuBtn.contains(e.target)) { closeMobileMenu(); } });
-        nav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMobileMenu));
-
-        // Vocabulary Modal Logic (unchanged)
-        const vocabularyData = { vocab1: [ { word: "skyscraper", definition: "A very tall building..." }, { word: "subway", definition: "An underground railway..." } ], vocab2: [ { word: "clue", definition: "An object or piece of information..." }, { word: "suspect", definition: "A person thought to have..." } ], vocab3: [ { word: "quantum", definition: "The smallest amount..." }, { word: "interstellar", definition: "Occurring or situated..." } ], not_found: [{ word: 'N/A', definition: 'No specific vocabulary list found for this comic.' }] };
-        const comicTitles = { comic1: "City Adventures", comic2: "Mystery at Midnight", comic3: "Sci-Fi Chronicles" };
-        function getVocabIdForComic(comicId) { return comicId ? comicId.replace('comic', 'vocab') : null; }
-        function openVocabModal(vocabId) { const vocabData = vocabularyData[vocabId] || vocabularyData['not_found']; vocabList.innerHTML = ''; if (!vocabData || vocabData.length === 0) { const li = document.createElement('li'); li.className = 'vocab-item'; li.textContent = 'No vocabulary available.'; vocabList.appendChild(li); } else { vocabData.forEach(item => { const li = document.createElement('li'); li.className = 'vocab-item'; li.innerHTML = `<div class="vocab-word">${item.word}</div> ${item.pronunciation ? `<div class="pronunciation">${item.pronunciation}</div>` : ''} <div class="vocab-definition">${item.definition}</div> ${item.example ? `<div class="vocab-example"><em>Example:</em> ${item.example}</div>` : ''}`; vocabList.appendChild(li); }); } const comicTitle = comicTitles[vocabId ? vocabId.replace('vocab','comic') : ''] || 'Comic'; document.getElementById('vocabTitle').textContent = `Vocabulary: ${comicTitle}`; vocabModal.classList.add('active'); }
-        vocabButtons.forEach(button => button.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); openVocabModal(button.dataset.vocabId); }));
-        vocabClose.addEventListener('click', () => vocabModal.classList.remove('active'));
-        window.addEventListener('click', (e) => { if (e.target === vocabModal) vocabModal.classList.remove('active'); });
-
-        // PDF URL Mapping - *** YOU MUST EDIT THIS ***
-        const comicPDFUrls = {
-            comic1: './comics/Invincible, Vol. 1.pdf', // Replace with your actual paths relative to index.html
-            comic2: 'comics/Mystery_Midnight_Sample.pdf', // e.g., 'comics/comic_name.pdf'
-            comic3: 'comics/SciFi_Chronicles_Sample.pdf',
-            // Add more here, matching data-comic-id values
-             'invincible_v1': 'comics/Invincible%2C%20Vol.%201.pdf' // Make sure file exists and path is correct
+        // Vocabulary data for each comic
+        const vocabData = {
+            'superhero-adventures': [
+                { word: 'Villain', definition: 'A character whose evil actions or motives are important to the plot' },
+                { word: 'Rescue', definition: 'To save someone from a dangerous or difficult situation' },
+                { word: 'Courage', definition: 'The ability to do something that frightens one' },
+                { word: 'Secret', definition: 'Something that is kept or meant to be kept unknown or unseen by others' },
+                { word: 'Adventure', definition: 'An unusual and exciting or daring experience' }
+            ],
+            'mystery-mansion': [
+                { word: 'Mystery', definition: 'Something that is difficult or impossible to understand or explain' },
+                { word: 'Clue', definition: 'A piece of evidence or information used in the detection of a crime' },
+                { word: 'Suspect', definition: 'A person thought to be guilty of a crime or offense' },
+                { word: 'Investigate', definition: 'To carry out a systematic or formal inquiry to discover and examine facts' },
+                { word: 'Evidence', definition: 'The available body of facts indicating whether a belief is true' }
+            ],
+            'space-explorers': [
+                { word: 'Galaxy', definition: 'A system of millions or billions of stars, together with gas and dust' },
+                { word: 'Planet', definition: 'A celestial body moving in an elliptical orbit around a star' },
+                { word: 'Astronaut', definition: 'A person trained to travel in a spacecraft' },
+                { word: 'Gravity', definition: 'The force that attracts a body toward the center of the earth' },
+                { word: 'Universe', definition: 'All existing matter and space considered as a whole' }
+            ],
+            'time-travel-tales': [
+                { word: 'Century', definition: 'A period of one hundred years' },
+                { word: 'Ancient', definition: 'Belonging to the very distant past' },
+                { word: 'Future', definition: 'The time or a period of time following the moment of speaking' },
+                { word: 'Timeline', definition: 'A graphical representation of a period of time' },
+                { word: 'Civilization', definition: 'The stage of human social development and organization' }
+            ],
+            'animal-kingdom': [
+                { word: 'Habitat', definition: 'The natural home or environment of an animal, plant, or other organism' },
+                { word: 'Species', definition: 'A group of living organisms consisting of similar individuals' },
+                { word: 'Predator', definition: 'An animal that naturally preys on others' },
+                { word: 'Extinct', definition: 'No longer in existence' },
+                { word: 'Ecosystem', definition: 'A biological community of interacting organisms' }
+            ],
+            'sports-stars': [
+                { word: 'Champion', definition: 'A person who has defeated all opponents in a competition' },
+                { word: 'Tournament', definition: 'A series of contests between a number of competitors' },
+                { word: 'Victory', definition: 'An act of defeating an enemy or opponent in a battle or competition' },
+                { word: 'Defeat', definition: 'Win a victory over someone in a battle or other contest' },
+                { word: 'Athlete', definition: 'A person who is proficient in sports and other forms of physical exercise' }
+            ]
         };
 
-        // PDF Handling
-        function updatePdfControls() {
-             const isFullscreen = !!document.fullscreenElement; // Check if fullscreen
-             // Disable vocab button specifically in fullscreen
-             toolbarVocabBtn.disabled = !pdfDoc || isFullscreen;
-             toolbarVocabBtn.style.opacity = isFullscreen ? '0.3' : (pdfDoc ? '1' : '0.5'); // Visual cue
-             toolbarVocabBtn.style.cursor = isFullscreen ? 'not-allowed' : (pdfDoc ? 'pointer' : 'not-allowed');
-             toolbarVocabBtn.title = isFullscreen ? 'Exit Fullscreen to view Vocabulary' : 'Open Vocabulary'; // Dynamic title
+        // PDF files for each comic (using relative paths)
+        const pdfFiles = {
+            'superhero-adventures': './comics/Invincible, Vol. 1.pdf',
+            'mystery-mansion': './comics/mystery-sample.pdf',
+            'space-explorers': './comics/space-sample.pdf',
+            'time-travel-tales': './comics/time-sample.pdf',
+            'animal-kingdom': './comics/animal-sample.pdf',
+            'sports-stars': './comics/sports-sample.pdf'
+        };
 
-            if (!pdfDoc) {
-                prevPageBtn.disabled = true; nextPageBtn.disabled = true;
-                zoomOutBtn.disabled = true; zoomInBtn.disabled = true;
-                fullscreenBtn.disabled = true; // Keep fullscreen disabled if no doc
-                pageInfo.textContent = 'Page ? of ?';
-                return;
-            }
-            prevPageBtn.disabled = (currentPageNum <= 1);
-            nextPageBtn.disabled = (currentPageNum >= pdfDoc.numPages);
-            zoomOutBtn.disabled = (currentScale <= minScale + 0.01);
-            zoomInBtn.disabled = (currentScale >= maxScale - 0.01);
-            fullscreenBtn.disabled = false; // Enable fullscreen once doc loads
-            pageInfo.textContent = `Page ${currentPageNum} of ${pdfDoc.numPages}`;
+        // DOM elements
+        const readButtons = document.querySelectorAll('.read-comic');
+        const vocabButtons = document.querySelectorAll('.view-vocab');
+        const pdfModal = document.getElementById('pdfModal');
+        const modalContent = document.getElementById('modalContent');
+        const closeModal = document.getElementById('closeModal');
+        const pdfViewer = document.getElementById('pdf-viewer');
+        const pdfContainer = document.getElementById('pdfContainer');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const prevPageBtn = document.getElementById('prev-page');
+        const nextPageBtn = document.getElementById('next-page');
+        const pageInfo = document.getElementById('page-info');
+        const zoomInBtn = document.getElementById('zoom-in');
+        const zoomOutBtn = document.getElementById('zoom-out');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const modalTitle = document.getElementById('modal-title');
+        const floatingVocabBtn = document.getElementById('floatingVocabBtn');
+        const vocabPanel = document.getElementById('vocabPanel');
+        const vocabList = document.getElementById('vocabList');
+        const closeVocabPanel = document.getElementById('closeVocabPanel');
+        const overlay = document.getElementById('overlay');
+        const searchInput = document.querySelector('.search-bar input');
+        const searchBtn = document.querySelector('.search-bar button');
+
+        // PDF viewer variables
+        let pdfDoc = null;
+        let pageNum = 1;
+        let pageRendering = false;
+        let pageNumPending = null;
+        let scale = 1.5;
+        let isFullscreen = false;
+        let currentComicId = null;
+
+        // Initialize comic cards animation
+        const comicCards = document.querySelectorAll('.comic-card');
+        gsap.set(comicCards, { opacity: 0, y: 20 });
+
+        function animateOnScroll() {
+            comicCards.forEach((card, index) => {
+                const cardPosition = card.getBoundingClientRect().top;
+                const screenPosition = window.innerHeight / 1.3;
+                
+                if (cardPosition < screenPosition) {
+                    gsap.to(card, {
+                        opacity: 1,
+                        y: 0,
+                        duration: 0.5,
+                        delay: index * 0.1,
+                        ease: "power2.out"
+                    });
+                }
+            });
         }
 
-        function renderPage(num) {
-            if (!pdfDoc) return;
-            pageRendering = true;
-            // Update controls *before* starting render, especially useful for zoom state
-            updatePdfControls();
-            pdfErrorDiv.style.display = 'none';
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
 
-            pdfDoc.getPage(num).then(page => {
-                const viewport = page.getViewport({ scale: currentScale });
-                pdfCanvas.height = viewport.height;
-                pdfCanvas.width = viewport.width;
-                const renderContext = { canvasContext: pdfContext, viewport: viewport };
+        // Show PDF modal and load comic
+        readButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                currentComicId = button.getAttribute('data-comic');
+                const comicTitle = button.closest('.comic-card').querySelector('h3').textContent;
+                
+                modalTitle.textContent = comicTitle;
+                pdfModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+                
+                // Show loading indicator
+                loadingIndicator.style.display = 'flex';
+                pdfViewer.style.display = 'none';
+                
+                // Load the PDF
+                loadPDF(pdfFiles[currentComicId]);
+            });
+        });
+
+        // Close PDF modal
+        closeModal.addEventListener('click', () => {
+            pdfModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            exitFullscreen();
+        });
+
+        // Close modal when clicking outside
+        pdfModal.addEventListener('click', (e) => {
+            if (e.target === pdfModal) {
+                pdfModal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                exitFullscreen();
+            }
+        });
+
+        // Load PDF file
+        function loadPDF(url) {
+            // Clear previous PDF
+            pdfViewer.style.display = 'none';
+            loadingIndicator.style.display = 'flex';
+            
+            // Reset page number
+            pageNum = 1;
+            
+            // Handle relative paths
+            const absoluteUrl = new URL(url, window.location.href).href;
+            
+            pdfjsLib.getDocument(absoluteUrl).promise.then(function(pdfDoc_) {
+                pdfDoc = pdfDoc_;
+                
+                // Update page info
+                pageInfo.textContent = `Page ${pageNum} of ${pdfDoc.numPages}`;
+                
+                // Enable/disable buttons
+                prevPageBtn.disabled = pageNum <= 1;
+                nextPageBtn.disabled = pageNum >= pdfDoc.numPages;
+                
+                // Hide loading indicator
+                loadingIndicator.style.display = 'none';
+                pdfViewer.style.display = 'block';
+                
+                // Render the first page
+                renderPage(pageNum);
+            }).catch(function(error) {
+                loadingIndicator.textContent = 'Error loading PDF. Please try another comic.';
+                console.error('Error loading PDF:', error);
+            });
+        }
+
+        // Render a page
+        function renderPage(num) {
+            pageRendering = true;
+            
+            pdfDoc.getPage(num).then(function(page) {
+                const viewport = page.getViewport({ scale: scale });
+                const canvas = document.getElementById('pdf-viewer');
+                const context = canvas.getContext('2d');
+                
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+                
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                
                 const renderTask = page.render(renderContext);
-                renderTask.promise.then(() => {
+                
+                renderTask.promise.then(function() {
                     pageRendering = false;
-                    // Update controls *after* render finishes successfully
-                    updatePdfControls();
+                    
                     if (pageNumPending !== null) {
                         renderPage(pageNumPending);
                         pageNumPending = null;
                     }
-                }).catch(error => { console.error("Error rendering page:", error); pdfErrorDiv.textContent = `Error rendering page ${num}: ${error.message}`; pdfErrorDiv.style.display = 'block'; pageRendering = false; updatePdfControls(); /* Update controls even on error */ });
-            }).catch(error => { console.error("Error getting page:", error); pdfErrorDiv.textContent = `Error getting page ${num}: ${error.message}`; pdfErrorDiv.style.display = 'block'; pageRendering = false; updatePdfControls(); /* Update controls even on error */ });
+                });
+            });
+            
+            pageInfo.textContent = `Page ${num} of ${pdfDoc.numPages}`;
+            
+            // Enable/disable buttons
+            prevPageBtn.disabled = num <= 1;
+            nextPageBtn.disabled = num >= pdfDoc.numPages;
         }
 
-        function queueRenderPage(num) { if (pageRendering) { pageNumPending = num; } else { renderPage(num); } }
-        function goToPrevPage() { if (currentPageNum <= 1) return; currentPageNum--; queueRenderPage(currentPageNum); }
-        function goToNextPage() { if (!pdfDoc || currentPageNum >= pdfDoc.numPages) return; currentPageNum++; queueRenderPage(currentPageNum); }
-        function zoomIn() { if (currentScale >= maxScale) return; currentScale = Math.min(maxScale, currentScale + 0.25); queueRenderPage(currentPageNum); }
-        function zoomOut() { if (currentScale <= minScale) return; currentScale = Math.max(minScale, currentScale - 0.25); queueRenderPage(currentPageNum); }
-
-        // Load PDF from URL
-        function openPdfModal(comicId) {
-            const pdfUrl = comicPDFUrls[comicId];
-            const comicTitle = comicTitles[comicId] || 'Comic';
-            if (!pdfUrl) { alert(`Sorry, the comic file URL for '${comicTitle}' is not configured.`); return; }
-
-            loader.classList.add('active');
-            pdfTitleLabel.textContent = comicTitle;
-            pdfErrorDiv.style.display = 'none';
-            currentComicIdForPdf = comicId;
-
-            const loadingTask = pdfjsLib.getDocument(pdfUrl);
-            loadingTask.promise.then(loadedPdfDoc => {
-                pdfDoc = loadedPdfDoc; currentPageNum = 1; currentScale = 1.5; renderPage(currentPageNum); pdfModal.classList.add('active'); loader.classList.remove('active');
-                // Initial state update AFTER PDF loads
-                updatePdfControls();
-            }).catch(error => { console.error(`Error loading PDF from URL '${pdfUrl}':`, error); let errorMsg = `Failed to load comic: ${error.message}.`; if (error.status === 404) { errorMsg = `Comic file not found at '${pdfUrl}'. Check path in GitHub repo.`; } else if (error.name === 'InvalidPDFException') { errorMsg = `The file at '${pdfUrl}' is not a valid PDF.`; } pdfErrorDiv.textContent = errorMsg; pdfErrorDiv.style.display = 'block'; closePdfModal(); loader.classList.remove('active'); alert(errorMsg); });
-        }
-
-        // Close PDF Modal
-        function closePdfModal() { pdfModal.classList.remove('active'); if (document.fullscreenElement) { document.exitFullscreen(); } pdfDoc = null; currentPageNum = 1; currentScale = 1.5; currentComicIdForPdf = null; pdfCanvas.width = 10; pdfCanvas.height = 10; pdfErrorDiv.style.display = 'none'; updatePdfControls(); }
-
-        // Event Listeners
-        comicLinks.forEach(link => { link.addEventListener('click', (e) => { e.preventDefault(); openPdfModal(link.dataset.comicId); }); });
-        prevPageBtn.addEventListener('click', goToPrevPage); nextPageBtn.addEventListener('click', goToNextPage); zoomInBtn.addEventListener('click', zoomIn); zoomOutBtn.addEventListener('click', zoomOut); pdfClose.addEventListener('click', closePdfModal);
-
-        // Toolbar Vocabulary Button Listener - Checks fullscreen state
-        toolbarVocabBtn.addEventListener('click', () => {
-            if (toolbarVocabBtn.disabled) return; // Exit if disabled (e.g., in fullscreen)
-            if (!currentComicIdForPdf) { openVocabModal('not_found'); return; }
-            const vocabId = getVocabIdForComic(currentComicIdForPdf);
-            openVocabModal(vocabId || 'not_found');
-        });
-
-        // Fullscreen Button Logic
-        fullscreenBtn.addEventListener('click', () => { if (!pdfModal.classList.contains('active') || fullscreenBtn.disabled) return; if (!document.fullscreenElement) { pdfModal.requestFullscreen().catch(err => { alert(`Error entering fullscreen: ${err.message}`); }); } else { if (document.exitFullscreen) { document.exitFullscreen(); } } });
-
-        // Fullscreen Change Listener - Crucial for updating controls
-        document.addEventListener('fullscreenchange', () => {
-            const icon = fullscreenBtn.querySelector('i');
-            const isFullscreen = !!document.fullscreenElement;
-
-            if (isFullscreen) {
-                icon.classList.remove('fa-expand'); icon.classList.add('fa-compress'); fullscreenBtn.setAttribute('aria-label', 'Exit Fullscreen');
+        // Queue rendering of a new page
+        function queueRenderPage(num) {
+            if (pageRendering) {
+                pageNumPending = num;
             } else {
-                icon.classList.remove('fa-compress'); icon.classList.add('fa-expand'); fullscreenBtn.setAttribute('aria-label', 'Enter Fullscreen');
-                // If exiting fullscreen, ensure vocab modal isn't stuck active
-                if (vocabModal.classList.contains('active')) {
-                    // vocabModal.classList.remove('active'); // Optional: close vocab on exit? Or leave it.
-                }
+                renderPage(num);
             }
+        }
 
-            // Update ALL controls after fullscreen change
-            updatePdfControls();
-
-            // Re-render needed only if size drastically changes, but safe to do
-             if (pdfDoc && pdfModal.classList.contains('active') && !pageRendering) {
-                 setTimeout(() => renderPage(currentPageNum), 50); // Short delay helps browser adjust
-             }
+        // Previous page button
+        prevPageBtn.addEventListener('click', function() {
+            if (pageNum <= 1) {
+                return;
+            }
+            pageNum--;
+            queueRenderPage(pageNum);
         });
 
-        // Keyboard navigation
-        document.addEventListener('keydown', (e) => { if (!pdfModal.classList.contains('active')) return; const isFullscreen = !!document.fullscreenElement; if (['ArrowLeft', 'ArrowRight', 'Escape', '+', '=', '-','f','v'].includes(e.key)) { if (!((e.key === '+' || e.key === '=' || e.key === '-') && (e.ctrlKey || e.metaKey))) { e.preventDefault(); } } switch (e.key) { case 'ArrowLeft': goToPrevPage(); break; case 'ArrowRight': goToNextPage(); break; case 'Escape': closePdfModal(); break; case '+': case '=': if (e.ctrlKey || e.metaKey) { e.preventDefault(); zoomIn(); } break; case '-': if (e.ctrlKey || e.metaKey) { e.preventDefault(); zoomOut(); } break; case 'f': fullscreenBtn.click(); break; case 'v': if (!isFullscreen) toolbarVocabBtn.click(); break; } }); // Only allow 'v' if not fullscreen
+        // Next page button
+        nextPageBtn.addEventListener('click', function() {
+            if (pageNum >= pdfDoc.numPages) {
+                return;
+            }
+            pageNum++;
+            queueRenderPage(pageNum);
+        });
 
-        // Smooth Scroll & Scroll Animation (unchanged)
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => { anchor.addEventListener('click', function(e) { const href = this.getAttribute('href'); if (!href || href === '#') return; const targetId = href.substring(1); if (!targetId) return; const targetElement = document.getElementById(targetId); if (!targetElement) return; e.preventDefault(); const headerOffset = document.querySelector('header')?.offsetHeight || 70; const elementPosition = targetElement.getBoundingClientRect().top; const offsetPosition = elementPosition + window.pageYOffset - headerOffset; window.scrollTo({ top: offsetPosition, behavior: 'smooth' }); closeMobileMenu(); }); });
-        const comicCards = document.querySelectorAll('.comic-card'); if ('IntersectionObserver' in window) { const observer = new IntersectionObserver((entries, observer) => { entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }); }, { threshold: 0.1 }); comicCards.forEach(card => observer.observe(card)); } else { function checkScrollFallback() { const triggerBottom = window.innerHeight * 0.85; comicCards.forEach(card => { if (!card.classList.contains('is-visible')) { const cardTop = card.getBoundingClientRect().top; if (cardTop < triggerBottom) { card.classList.add('is-visible');}}}); } window.addEventListener('scroll', checkScrollFallback); checkScrollFallback(); }
+        // Zoom in button
+        zoomInBtn.addEventListener('click', function() {
+            if (scale >= 3) return;
+            scale += 0.25;
+            queueRenderPage(pageNum);
+        });
 
+        // Zoom out button
+        zoomOutBtn.addEventListener('click', function() {
+            if (scale <= 0.5) return;
+            scale -= 0.25;
+            queueRenderPage(pageNum);
+        });
+
+        // Fullscreen button
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
+
+        function toggleFullscreen() {
+            if (isFullscreen) {
+                exitFullscreen();
+            } else {
+                enterFullscreen();
+            }
+        }
+
+        function enterFullscreen() {
+            pdfModal.classList.add('fullscreen');
+            modalContent.classList.add('fullscreen');
+            pdfContainer.classList.add('fullscreen');
+            fullscreenBtn.innerHTML = '<i class="fas fa-compress"></i> Exit Fullscreen';
+            isFullscreen = true;
+            
+            // Show floating vocab button
+            floatingVocabBtn.style.display = 'flex';
+            
+            // Re-render page to fit new container size
+            queueRenderPage(pageNum);
+        }
+
+        function exitFullscreen() {
+            pdfModal.classList.remove('fullscreen');
+            modalContent.classList.remove('fullscreen');
+            pdfContainer.classList.remove('fullscreen');
+            fullscreenBtn.innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+            isFullscreen = false;
+            
+            // Hide floating vocab button
+            floatingVocabBtn.style.display = 'none';
+            vocabPanel.classList.remove('active');
+            overlay.classList.remove('active');
+            
+            // Re-render page to fit new container size
+            queueRenderPage(pageNum);
+        }
+
+        // Floating vocabulary button in fullscreen mode
+        floatingVocabBtn.addEventListener('click', () => {
+            if (vocabPanel.classList.contains('active')) {
+                vocabPanel.classList.remove('active');
+                overlay.classList.remove('active');
+            } else {
+                showVocabulary(currentComicId);
+            }
+        });
+
+        // Show vocabulary panel
+        vocabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const comicId = button.getAttribute('data-comic');
+                showVocabulary(comicId);
+            });
+        });
+
+        function showVocabulary(comicId) {
+            const vocabItems = vocabData[comicId];
+            
+            // Clear previous items
+            vocabList.innerHTML = '';
+            
+            // Add new items
+            vocabItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'vocab-item';
+                li.innerHTML = `
+                    <div class="vocab-word">${item.word}</div>
+                    <div class="vocab-definition">${item.definition}</div>
+                `;
+                vocabList.appendChild(li);
+            });
+            
+            // Show panel with animation
+            overlay.classList.add('active');
+            vocabPanel.classList.add('active');
+            gsap.from(vocabPanel, { x: 100, opacity: 0, duration: 0.3 });
+        }
+
+        // Hide vocabulary panel
+        closeVocabPanel.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            vocabPanel.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', () => {
+            overlay.classList.remove('active');
+            vocabPanel.classList.remove('active');
+        });
+
+        // Simple search functionality
+        searchBtn.addEventListener('click', performSearch);
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        function performSearch() {
+            const searchTerm = searchInput.value.toLowerCase();
+            if (searchTerm.trim() === '') {
+                comicCards.forEach(card => {
+                    card.style.display = 'block';
+                    gsap.from(card, { 
+                        scale: 0.9, 
+                        opacity: 0, 
+                        duration: 0.3 
+                    });
+                });
+                return;
+            }
+            
+            comicCards.forEach(card => {
+                const title = card.querySelector('h3').textContent.toLowerCase();
+                const description = card.querySelector('p').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm)) {
+                    card.style.display = 'block';
+                    gsap.from(card, { 
+                        scale: 0.9, 
+                        opacity: 0, 
+                        duration: 0.3 
+                    });
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (pdfDoc) {
+                queueRenderPage(pageNum);
+            }
+        });
     </script>
 </body>
 </html>
